@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "308956582686",
+    "firebase_url": "https://guesswhat-39110.firebaseio.com",
+    "project_id": "guesswhat-39110",
+    "storage_bucket": "guesswhat-39110.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:308956582686:android:6dd41aeae3d89678",
+        "android_client_info": {
+          "package_name": "com.example.omkar.guesswhat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "308956582686-3ngnopnbsmg567krj28n10e4bgkcp3ns.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4Vf6e7foISghocz8jQtolKCGOWXpMc74"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,12 +1,20 @@
 package com.example.omkar.guesswhat;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -42,22 +51,61 @@ public class MainActivity extends AppCompatActivity {
         loadQAndA();
         loadNewQandI();
 
-        // button click handler
-        Button next = (Button) findViewById(R.id.next);
-        next.setOnClickListener(new View.OnClickListener() {
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        // button click handler for entering answer
+        Button enter = (Button) findViewById(R.id.enter);
+        enter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadNewQandI();
+                EditText ans=(EditText)findViewById(R.id.edit);
+                checkAnswer(ans, qAndA);
+                ans.setText("");
             }
         });
 
 
+        // button click handler for next question
+        Button next = (Button) findViewById(R.id.next);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView scoreTotal = (TextView) findViewById(R.id.scoreTotal);
+                String out = "Score: " + Integer.toString(score) + "/Total: " + Integer.toString(total);
+                scoreTotal.setText(out);
+                loadNewQandI();
+            }
+        });
     }
+
+    /**
+     * Checks answer entered by the user
+     */
+    private void checkAnswer(EditText editText, HashMap qAndA){
+        TextView scoreTotal = (TextView) findViewById(R.id.scoreTotal);
+        String ans = editText.getText().toString().trim().toLowerCase();
+        String out;
+
+        if(((ArrayList)qAndA.get(question)).contains(ans))
+        {
+            ((ArrayList)qAndA.get(question)).remove(((ArrayList)qAndA.get(question)).indexOf(ans));
+            score++;
+            out = "Score: " + Integer.toString(score) + "/Total: " + Integer.toString(total);
+            scoreTotal.setText(out);
+        }
+
+
+    }
+
 
     /**
      * Loads questions, its answers and corresponding images to two Hash Maps
      */
-    private void loadQAndA (){
+    private void loadQAndA() {
 
         int noOfQuestions = -1;
 
@@ -74,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             // read questions
-            while((lineQ = inQ.readLine()) != null) {
+            while ((lineQ = inQ.readLine()) != null) {
 
                 // question
                 String question = lineQ.trim();
@@ -87,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // store answers in a list
                 ArrayList<String> answerList = new ArrayList<>();
-                for (int i = 0; i < noOfAnswers; i++){
+                for (int i = 0; i < noOfAnswers; i++) {
 
                     lineA = inA.readLine();
                     String answer = lineA.trim();
@@ -96,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                 // add to hash map
                 qAndA.put(question, answerList);
                 // select image and add to hash map
-                qAndI.put(question,(getResources().getIdentifier("picture"+ noOfQuestions, "drawable", "com.example.omkar.guesswhat")));
+                qAndI.put(question, (getResources().getIdentifier("picture" + noOfQuestions, "drawable", "com.example.omkar.guesswhat")));
 
             }
         } catch (IOException e) {
@@ -121,36 +169,57 @@ public class MainActivity extends AppCompatActivity {
 
         // update total score
         total = noOfQuestions;
+
     }
 
 
     /**
-     * Creates 9 equal Bitmaps of the given Bitmap image
-     * @param picture
+     * Creates equal Bitmaps of the given Bitmap image
+     *
+     * @param img
      * @return
      */
-    private Bitmap[] splitBitmap(Bitmap picture){
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(picture, 240, 240, true);
-        Bitmap[] imgs = new Bitmap[9];
-        // Selects coordinates and widths of the larger bitmap to create smaller part
-        imgs[0] = Bitmap.createBitmap(scaledBitmap, 0, 0, 80 , 80);
-        imgs[1] = Bitmap.createBitmap(scaledBitmap, 80, 0, 80, 80);
-        imgs[2] = Bitmap.createBitmap(scaledBitmap, 160, 0, 80,80);
-        imgs[3] = Bitmap.createBitmap(scaledBitmap, 0, 80, 80, 80);
-        imgs[4] = Bitmap.createBitmap(scaledBitmap, 80, 80, 80,80);
-        imgs[5] = Bitmap.createBitmap(scaledBitmap, 160, 80,80,80);
-        imgs[6] = Bitmap.createBitmap(scaledBitmap, 0, 160, 80,80);
-        imgs[7] = Bitmap.createBitmap(scaledBitmap, 80, 160,80,80);
-        imgs[8] = Bitmap.createBitmap(scaledBitmap, 160,160,80,80);
-        return imgs;
+    private ArrayList<Bitmap> splitBitmap(Bitmap img) {
 
+        Bitmap picture = Bitmap.createScaledBitmap(img, 650, 500, true);
+
+        //Number of rows
+        int xCount = 10;
+
+        //Number of columns
+        int yCount = 10;
+
+        ArrayList<Bitmap> imgs = new ArrayList<>();
+        int width, height, k = 0;
+
+        // Divide the original bitmap width by the desired vertical column count
+        width = picture.getWidth() / xCount;
+
+        // Divide the original bitmap height by the desired horizontal row count
+        height = picture.getHeight() / yCount;
+
+        // Loop the array and create bitmaps for each coordinate
+        for (int x = 0; x < xCount; ++x) {
+            for (int y = 0; y < yCount; ++y) {
+                // Create the sliced bitmap
+                imgs.add(Bitmap.createBitmap(picture, x * width, y * height, width, height));
+                k++;
+            }
+        }
+
+        // Randomly shuffle the array
+        long seed = System.nanoTime();
+        Collections.shuffle(imgs, new Random(seed));
+
+        // Return the array
+        return imgs;
     }
 
     /**
      * Load a new image after selecting a random question
      * The image is segmented and added to Image grid
      */
-    private void loadNewQandI(){
+    private void loadNewQandI() {
 
         // pick a question from set
         ArrayList<String> keys = new ArrayList<>(qAndI.keySet());
@@ -163,35 +232,55 @@ public class MainActivity extends AppCompatActivity {
         Bitmap btmp = BitmapFactory.decodeResource(getResources(), qAndI.get(question));
 
         // get segmented images
-        Bitmap [] imgs = splitBitmap(btmp);
+        ArrayList<Bitmap> imgs = splitBitmap(btmp);
 
         // add segmented images to the image grid
-        ImageView imageView1 = (ImageView) findViewById(R.id.img1);
-        imageView1.setImageBitmap(imgs[3]);
-
-        ImageView imageView2 = (ImageView) findViewById(R.id.img2);
-        imageView2.setImageBitmap(imgs[8]);
-
-        ImageView imageView3 = (ImageView) findViewById(R.id.img3);
-        imageView3.setImageBitmap(imgs[2]);
-
-        ImageView imageView4 = (ImageView) findViewById(R.id.img4);
-        imageView4.setImageBitmap(imgs[5]);
-
-        ImageView imageView5 = (ImageView) findViewById(R.id.img5);
-        imageView5.setImageBitmap(imgs[0]);
-
-        ImageView imageView6 = (ImageView) findViewById(R.id.img6);
-        imageView6.setImageBitmap(imgs[7]);
-
-        ImageView imageView7 = (ImageView) findViewById(R.id.img7);
-        imageView7.setImageBitmap(imgs[4]);
-
-        ImageView imageView8 = (ImageView) findViewById(R.id.img8);
-        imageView8.setImageBitmap(imgs[1]);
-
-        ImageView imageView9 = (ImageView) findViewById(R.id.img9);
-        imageView9.setImageBitmap(imgs[6]);
-
+        GridView grid = (GridView) findViewById(R.id.grid);
+        grid.setAdapter(new ImageAdapter(this, imgs));
+        grid.setNumColumns((int) Math.sqrt(imgs.size()));
     }
+
+    /**
+     * Class to handle inserting images into GridView
+     */
+    private class ImageAdapter extends BaseAdapter {
+        private Context mContext;
+        public ArrayList <Bitmap> imgs = new ArrayList<>();
+
+        public ImageAdapter(Context c, ArrayList<Bitmap> imgs) {
+            mContext = c;
+            this.imgs = imgs;
+        }
+
+        public int getCount() {
+            return imgs.size();
+        }
+
+        public Object getItem(int position) {
+            return null;
+        }
+
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        // create a new ImageView for each item referenced by the Adapter
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView imageView;
+            if (convertView == null) {  // if it's not recycled, initialize some attributes
+                imageView = new ImageView(mContext);
+                imageView.setLayoutParams(new GridView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setPadding(0, 0, 0, 0);
+            } else {
+                imageView = (ImageView) convertView;
+            }
+
+            imageView.setImageBitmap(imgs.get(position));
+            return imageView;
+
+        }
+    }
+
+
 }
