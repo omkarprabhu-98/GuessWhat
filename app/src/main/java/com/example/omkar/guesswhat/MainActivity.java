@@ -22,8 +22,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,12 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mQnADatabaseReference;
     private ChildEventListener mChildEventListener;
 
-    // Firebase Storage Object
-    private FirebaseStorage mFirebaseStorage;
-    private StorageReference mQuestionImagesStorageReference;
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,10 +56,6 @@ public class MainActivity extends AppCompatActivity {
         // Database objects instantiated
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mQnADatabaseReference = mFirebaseDatabase.getReference().child("questions");
-
-        // Storage objects initialized
-        mFirebaseStorage = FirebaseStorage.getInstance();
-        mQuestionImagesStorageReference = mFirebaseStorage.getReference().child("question_images");
 
         // loading game data
         loadQAndA();
@@ -105,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
     /**
      * Checks answer entered by the user
      */
@@ -112,7 +102,11 @@ public class MainActivity extends AppCompatActivity {
         TextView scoreTotal = (TextView) findViewById(R.id.scoreTotal);
         String ans = editText.getText().toString().trim().toLowerCase();
         String out;
-
+        Log.d("Ans", ans);
+        for(String log : currentQnA.getAnswer())
+        {
+            Log.d("Content",log);
+        }
         if(((ArrayList)currentQnA.getAnswer()).contains(ans))
         {
             ((ArrayList)currentQnA.getAnswer()).remove(((ArrayList)currentQnA.getAnswer()).indexOf(ans));
@@ -121,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             scoreTotal.setText(out);
         }
     }
+
 
 
     /**
@@ -166,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     /**
      * Creates equal Bitmaps of the given Bitmap image
      * @param img
@@ -206,6 +202,8 @@ public class MainActivity extends AppCompatActivity {
         // Return the array
         return imgs;
     }
+
+
 
     /**
      * Load a new image after selecting a random question
@@ -251,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
             protected void onPostExecute(Void dummy) {
                 if (null != btmp) {
                     // Update the image of a question's Image View
-                    Log.d("CHECK", "IN TP");
+//                    Log.d("CHECK", "IN TP");
                     if (btmp != null) {
                         // get segmented images
                         ArrayList<Bitmap> imgs = splitBitmap(btmp);
@@ -266,9 +264,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }.execute();
 
-        Log.d("URL", currentQnA.getPhotoUrl());
+//        Log.d("URL", currentQnA.getPhotoUrl());
 
     }
+
+
 
     /**
      * Class to handle inserting images into GridView
