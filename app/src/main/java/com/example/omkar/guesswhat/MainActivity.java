@@ -1,11 +1,12 @@
 package com.example.omkar.guesswhat;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -14,41 +15,66 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.bumptech.glide.Glide;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    HashMap<String, ArrayList<String>> qAndA;
-    HashMap<String, Integer> qAndI;
+    // first object load indicator
+    private static int FIRST_ENTRY_IN_DATABASE = 0;
 
+    // game databse
+    private ArrayList<QnA> database;
 
+    // game variables
     private String question;
     private int score;
     private int total;
+
+    // Current game object
+    QnA currentQnA;
+
+    // Database reference objects
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mQnADatabaseReference;
+    private ChildEventListener mChildEventListener;
+
+    // Firebase Storage Object
+    private FirebaseStorage mFirebaseStorage;
+    private StorageReference mQuestionImagesStorageReference;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // object creates
-        qAndA = new HashMap<>();
-        qAndI = new HashMap<>();
+        // Database objects instantiated
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mQnADatabaseReference = mFirebaseDatabase.getReference().child("questions");
+
+        // Storage objects initialized
+        mFirebaseStorage = FirebaseStorage.getInstance();
+        mQuestionImagesStorageReference = mFirebaseStorage.getReference().child("question_images");
 
         // loading game data
         loadQAndA();
-        loadNewQandI();
 
     }
+
+
 
     @Override
     protected void onResume(){
@@ -60,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EditText ans=(EditText)findViewById(R.id.edit);
-                checkAnswer(ans, qAndA);
+                checkAnswer(ans);
                 ans.setText("");
             }
         });
@@ -82,97 +108,66 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Checks answer entered by the user
      */
-    private void checkAnswer(EditText editText, HashMap qAndA){
+    private void checkAnswer(EditText editText){
         TextView scoreTotal = (TextView) findViewById(R.id.scoreTotal);
         String ans = editText.getText().toString().trim().toLowerCase();
         String out;
 
-        if(((ArrayList)qAndA.get(question)).contains(ans))
+        if(((ArrayList)currentQnA.getAnswer()).contains(ans))
         {
-            ((ArrayList)qAndA.get(question)).remove(((ArrayList)qAndA.get(question)).indexOf(ans));
+            ((ArrayList)currentQnA.getAnswer()).remove(((ArrayList)currentQnA.getAnswer()).indexOf(ans));
             score++;
             out = "Score: " + Integer.toString(score) + "/Total: " + Integer.toString(total);
             scoreTotal.setText(out);
         }
-
-
     }
 
 
     /**
-     * Loads questions, its answers and corresponding images to two Hash Maps
+     * Loads questions from firebase database into the
      */
     private void loadQAndA() {
 
-        int noOfQuestions = -1;
+        // Instantiate database
+        database = new ArrayList<>();
 
-        // get assetManager instance
-        AssetManager assetManager = getAssets();
-        try {
-            // open input stream to questions and answers files
-            InputStream inputStreamQ = assetManager.open("questions.txt");
-            InputStream inputStreamA = assetManager.open("answers.txt");
-            BufferedReader inQ = new BufferedReader(new InputStreamReader(inputStreamQ));
-            BufferedReader inA = new BufferedReader(new InputStreamReader(inputStreamA));
-            String lineQ = null;
-            String lineA = null;
+        // Set childEventListener on mQnADatabaseReference
+        // For actively listening to changes in firebase's real time database
+        if(mChildEventListener == null){
+            mChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    // add Messages the the list
+                    QnA qAndA = dataSnapshot.getValue(QnA.class);
+                    database.add(qAndA);
 
-
-            // read questions
-            while ((lineQ = inQ.readLine()) != null) {
-
-                // question
-                String question = lineQ.trim();
-
-                noOfQuestions++;
-
-                // get no of answers for that questions
-                lineQ = inQ.readLine();
-                int noOfAnswers = Integer.parseInt(lineQ.trim());
-
-                // store answers in a list
-                ArrayList<String> answerList = new ArrayList<>();
-                for (int i = 0; i < noOfAnswers; i++) {
-
-                    lineA = inA.readLine();
-                    String answer = lineA.trim();
-                    answerList.add(answer);
+                    if (FIRST_ENTRY_IN_DATABASE == 0){
+                        loadNewQandI();
+                    }
+                    FIRST_ENTRY_IN_DATABASE = 1;
                 }
-                // add to hash map
-                qAndA.put(question, answerList);
-                // select image and add to hash map
-                qAndI.put(question, (getResources().getIdentifier("picture" + noOfQuestions, "drawable", "com.example.omkar.guesswhat")));
 
-            }
-        } catch (IOException e) {
-            Toast toast = Toast.makeText(this, "Could not load Questions", Toast.LENGTH_LONG);
-            toast.show();
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {}
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {}
+            };
+
+            // Event Listener for reading data from real time database
+            mQnADatabaseReference.addChildEventListener(mChildEventListener);
         }
-
-
-//        // print hash Map for debugging
-//        for (String name: qAndA.keySet()){
-//            System.out.println("" + name);
-//            ArrayList<String> answerList = new ArrayList<>();
-//            answerList = qAndA.get(name);
-//            int i = 0;
-//            while (i < answerList.size()){
-//                System.out.println(":  " + answerList.get(i));
-//                i++;
-//            }
-//
-//        }
-
-
-        // update total score
-        total = noOfQuestions;
-
     }
 
 
     /**
      * Creates equal Bitmaps of the given Bitmap image
-     *
      * @param img
      * @return
      */
@@ -218,23 +213,61 @@ public class MainActivity extends AppCompatActivity {
      */
     private void loadNewQandI() {
 
+        // initialize turn varibles
+        score = 0;
+        total = 0;
+
         // pick a question from set
-        ArrayList<String> keys = new ArrayList<>(qAndI.keySet());
         Random random = new Random();
-        question = keys.get(random.nextInt(keys.size()));
+        currentQnA = database.get(random.nextInt(database.size()));
+        question = currentQnA.getQuestion();
         TextView questionView = (TextView) findViewById(R.id.question);
         questionView.setText(question);
+        total = currentQnA.getNoOfAns();
 
-        // get image for a random question
-        Bitmap btmp = BitmapFactory.decodeResource(getResources(), qAndI.get(question));
 
-        // get segmented images
-        ArrayList<Bitmap> imgs = splitBitmap(btmp);
+        // Background task for fetching image of a question
+        new AsyncTask<Void, Void, Void>() {
+            Bitmap btmp;
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (Looper.myLooper() == null) {
+                    Looper.prepare();
+                }
+                try {
 
-        // add segmented images to the image grid
-        GridView grid = (GridView) findViewById(R.id.grid);
-        grid.setAdapter(new ImageAdapter(this, imgs));
-        grid.setNumColumns((int) Math.sqrt(imgs.size()));
+                    btmp = Glide.
+                            with(MainActivity.this).
+                            load(currentQnA.getPhotoUrl()).
+                            asBitmap().
+                            into(100,100).
+                            get();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(Void dummy) {
+                if (null != btmp) {
+                    // Update the image of a question's Image View
+                    Log.d("CHECK", "IN TP");
+                    if (btmp != null) {
+                        // get segmented images
+                        ArrayList<Bitmap> imgs = splitBitmap(btmp);
+
+                        // add segmented images to the image grid
+                        GridView grid = (GridView) findViewById(R.id.grid);
+                        grid.setAdapter(new ImageAdapter(MainActivity.this, imgs));
+                        grid.setNumColumns((int) Math.sqrt(imgs.size()));
+
+                    }
+                }
+            }
+        }.execute();
+
+        Log.d("URL", currentQnA.getPhotoUrl());
+
     }
 
     /**
