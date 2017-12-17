@@ -6,11 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -184,10 +181,10 @@ public class MainActivity extends AppCompatActivity {
         Bitmap picture = Bitmap.createScaledBitmap(img, 650, 500, true);
 
         //Number of rows
-        int xCount = 10;
+        int xCount = 3;
 
         //Number of columns
-        int yCount = 10;
+        int yCount = 3;
 
         ArrayList<Bitmap> imgs = new ArrayList<>();
         int width, height, k = 0;

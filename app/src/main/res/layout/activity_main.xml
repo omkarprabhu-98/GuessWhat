@@ -12,7 +12,7 @@
         android:id="@+id/question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="16dp"
         android:gravity="center"
         android:text="Question?"
         android:textAlignment="center"
@@ -21,30 +21,31 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="272dp"
+        android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:padding="4dp">
 
         <GridView
             android:id="@+id/grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:columnWidth="90dp"
-            android:numColumns="auto_fit"
-            android:verticalSpacing="0dp"
+            android:gravity="center"
             android:horizontalSpacing="0dp"
+            android:numColumns="auto_fit"
             android:stretchMode="columnWidth"
-            android:gravity="center"/>
+            android:verticalSpacing="0dp" />
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_weight="0">
 
         <EditText
             android:id="@+id/edit"
-            android:layout_width="218dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
@@ -67,20 +68,21 @@
         android:textAlignment="center"
         android:textSize="16sp" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+
 
         <Button
             android:id="@+id/next"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="200dp"
-            android:layout_marginRight="32dp"
-            android:layout_marginTop="8dp"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
             android:background="#039BE5"
-            android:padding="16dp"
+            android:padding="8dp"
             android:text="NEXT"
             android:textColor="#fff" />
 
@@ -88,15 +90,13 @@
             android:id="@+id/enter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="200dp"
-            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
             android:background="#039BE5"
-            android:padding="16dp"
+            android:padding="8dp"
             android:text="ENTER"
             android:textColor="#fff" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>
