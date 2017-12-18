@@ -16,4 +16,9 @@
                 android:title="Extreme" />
         </menu>
     </item>
+
+    <item
+        android:id="@+id/addQ"
+        android:title="Add a Question">
+    </item>
 </menu>

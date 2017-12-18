@@ -1,6 +1,7 @@
 package com.example.omkar.guesswhat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -135,6 +136,9 @@ public class MainActivity extends AppCompatActivity {
                 difficulty = 9;
                 displayImage(currentImage);
                 return true;
+            case R.id.addQ:
+                Intent i = new Intent(MainActivity.this, AddQuestion.class);
+                startActivity(i);
             default:
                 return super.onOptionsItemSelected(item);
         }
