@@ -83,12 +83,12 @@ public class AddQuestion extends AppCompatActivity {
             public void onClick(View view) {
 
                 // get answer and add to list
-                String ans = ansField.getText().toString();
+                String ans = ansField.getText().toString().toLowerCase();
                 ansList.add(ans);
                 String ansListTxt = ansListField.getText().toString();
 
                 // display answer list
-                if (ansListTxt == null){
+                if (ansListTxt.equals("")){
                     ansListTxt = ans;
                 }
                 else{
