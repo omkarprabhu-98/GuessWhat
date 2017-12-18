@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     // first object load indicator
     private static int FIRST_ENTRY_IN_DATABASE = 0;
 
-    // game databse
+    // game database
     private ArrayList<QnA> database;
 
     // game variables
@@ -56,7 +57,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
+        // preloader
+        final LinearLayout linlaHeaderProgress = (LinearLayout) findViewById(R.id.linlaHeaderProgress);
+        linlaHeaderProgress.setVisibility(View.VISIBLE);
 
         // Database objects instantiated
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -98,12 +104,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.settings, menu);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -118,11 +128,11 @@ public class MainActivity extends AppCompatActivity {
                 displayImage(currentImage);
                 return true;
             case R.id.hard:
-                difficulty = 10;
+                difficulty = 7;
                 displayImage(currentImage);
                 return true;
             case R.id.extreme:
-                difficulty = 15;
+                difficulty = 9;
                 displayImage(currentImage);
                 return true;
             default:
@@ -245,6 +255,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void loadNewQandI() {
 
+        // preloader
+        final LinearLayout linlaHeaderProgress = (LinearLayout) findViewById(R.id.linlaHeaderProgress);
+        linlaHeaderProgress.setVisibility(View.VISIBLE);
+
         // initialize turn varibles
         score = 0;
         total = 0;
@@ -253,9 +267,17 @@ public class MainActivity extends AppCompatActivity {
         Random random = new Random();
         currentQnA = database.get(random.nextInt(database.size()));
         question = currentQnA.getQuestion();
+
+        // display question text
         TextView questionView = (TextView) findViewById(R.id.question);
         questionView.setText(question);
+
         total = currentQnA.getNoOfAns();
+
+        // display game variables
+        TextView scoreTotal = (TextView) findViewById(R.id.scoreTotal);
+        String out = "Score: " + Integer.toString(score) + "/Total: " + Integer.toString(total);
+        scoreTotal.setText(out);
 
 
         // Background task for fetching image of a question
@@ -272,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
                             with(MainActivity.this).
                             load(currentQnA.getPhotoUrl()).
                             asBitmap().
-                            into(100,100).
+                            into(1000,1000).
                             get();
                     currentImage = btmp;
                 } catch (Exception e) {
@@ -287,8 +309,9 @@ public class MainActivity extends AppCompatActivity {
 //                    Log.d("CHECK", "IN TP");
                     if (btmp != null) {
                        displayImage(btmp);
-
                     }
+                    // remove preloader
+                    linlaHeaderProgress.setVisibility(View.GONE);
                 }
             }
         }.execute();

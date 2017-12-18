@@ -7,6 +7,20 @@
     tools:context="com.example.omkar.guesswhat.MainActivity"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/linlaHeaderProgress"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ProgressBar
+            android:id="@+id/pbHeaderProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </ProgressBar>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/question"
@@ -20,7 +34,7 @@
         android:textSize="24sp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:orientation="vertical"
@@ -28,14 +42,14 @@
 
         <GridView
             android:id="@+id/grid"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:columnWidth="90dp"
             android:gravity="center"
             android:horizontalSpacing="0dp"
             android:numColumns="auto_fit"
             android:stretchMode="columnWidth"
-            android:verticalSpacing="0dp" />
+            android:verticalSpacing="2dp" />
     </LinearLayout>
 
     <RelativeLayout
