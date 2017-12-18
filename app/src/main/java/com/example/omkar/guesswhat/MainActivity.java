@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private String question;
     private int score;
     private int total;
+    private int difficulty = 3;
+    private Bitmap currentImage;
 
     // Current game object
     QnA currentQnA;
@@ -93,6 +98,37 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.easy:
+                difficulty = 3;
+                displayImage(currentImage);
+                return true;
+            case R.id.medium:
+                difficulty = 5;
+                displayImage(currentImage);
+                return true;
+            case R.id.hard:
+                difficulty = 10;
+                displayImage(currentImage);
+                return true;
+            case R.id.extreme:
+                difficulty = 15;
+                displayImage(currentImage);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 
     /**
@@ -172,10 +208,10 @@ public class MainActivity extends AppCompatActivity {
         Bitmap picture = Bitmap.createScaledBitmap(img, 650, 500, true);
 
         //Number of rows
-        int xCount = 3;
+        int xCount = difficulty;
 
         //Number of columns
-        int yCount = 3;
+        int yCount = difficulty;
 
         ArrayList<Bitmap> imgs = new ArrayList<>();
         int width, height, k = 0;
@@ -202,8 +238,6 @@ public class MainActivity extends AppCompatActivity {
         // Return the array
         return imgs;
     }
-
-
 
     /**
      * Load a new image after selecting a random question
@@ -240,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
                             asBitmap().
                             into(100,100).
                             get();
+                    currentImage = btmp;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -251,13 +286,7 @@ public class MainActivity extends AppCompatActivity {
                     // Update the image of a question's Image View
 //                    Log.d("CHECK", "IN TP");
                     if (btmp != null) {
-                        // get segmented images
-                        ArrayList<Bitmap> imgs = splitBitmap(btmp);
-
-                        // add segmented images to the image grid
-                        GridView grid = (GridView) findViewById(R.id.grid);
-                        grid.setAdapter(new ImageAdapter(MainActivity.this, imgs));
-                        grid.setNumColumns((int) Math.sqrt(imgs.size()));
+                       displayImage(btmp);
 
                     }
                 }
@@ -268,6 +297,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void displayImage(Bitmap btmp){
+        // get segmented images
+        ArrayList<Bitmap> imgs = splitBitmap(btmp);
+
+        // add segmented images to the image grid
+        GridView grid = (GridView) findViewById(R.id.grid);
+        grid.setAdapter(new ImageAdapter(MainActivity.this, imgs));
+        grid.setNumColumns((int) Math.sqrt(imgs.size()));
+    }
 
 
     /**
