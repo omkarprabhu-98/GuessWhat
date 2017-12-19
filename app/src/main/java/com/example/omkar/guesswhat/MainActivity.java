@@ -30,20 +30,24 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int RESULT_OK =  2;
+
     // first object load indicator
     private static int FIRST_ENTRY_IN_DATABASE = 0;
+
 
     // game database
     private ArrayList<QnA> database;
 
     // game variables
     private String question;
-    private int score;
     private int total;
+    private HashMap <String, Integer> score = new HashMap<>();
     private int difficulty = 3;
     private Bitmap currentImage;
 
@@ -97,12 +101,23 @@ public class MainActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView scoreTotal = (TextView) findViewById(R.id.scoreTotal);
-                String out = "Score: " + Integer.toString(score) + "/Total: " + Integer.toString(total);
-                scoreTotal.setText(out);
-                loadNewQandI();
+                if(!database.isEmpty())
+                    loadNewQandI();
+                else{
+                    Intent i = new Intent(MainActivity.this, CheckBack.class);
+                    startActivityForResult(i, RESULT_OK);
+                }
+
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULT_OK) {
+            loadNewQandI();
+        }
     }
 
 
@@ -160,9 +175,14 @@ public class MainActivity extends AppCompatActivity {
         if(((ArrayList)currentQnA.getAnswer()).contains(ans))
         {
             ((ArrayList)currentQnA.getAnswer()).remove(((ArrayList)currentQnA.getAnswer()).indexOf(ans));
-            score++;
-            out = "Score: " + Integer.toString(score) + "/Total: " + Integer.toString(total);
+            score.put(question, score.get(question) + 1);
+            out = "Score: " + Integer.toString(score.get(question)) + "/Total: " + Integer.toString(total);
             scoreTotal.setText(out);
+            if(currentQnA.getAnswer().isEmpty()){
+                database.remove(currentQnA);
+                final Button next = (Button) findViewById(R.id.next);
+                next.performClick();
+            }
         }
     }
 
@@ -263,12 +283,11 @@ public class MainActivity extends AppCompatActivity {
         final LinearLayout linlaHeaderProgress = (LinearLayout) findViewById(R.id.linlaHeaderProgress);
         linlaHeaderProgress.setVisibility(View.VISIBLE);
 
-        // initialize turn varibles
-        score = 0;
+        // initialize turn variables
         total = 0;
 
         // pick a question from set
-        Random random = new Random();
+        Random random = new Random(System.nanoTime());
         currentQnA = database.get(random.nextInt(database.size()));
         question = currentQnA.getQuestion();
 
@@ -276,11 +295,17 @@ public class MainActivity extends AppCompatActivity {
         TextView questionView = (TextView) findViewById(R.id.question);
         questionView.setText(question);
 
+        //get total answers for the question
         total = currentQnA.getNoOfAns();
+
+        //if the question is accessed for the first time, add it to the array
+        if(!score.containsKey(question)){
+            score.put(question, 0);
+        }
 
         // display game variables
         TextView scoreTotal = (TextView) findViewById(R.id.scoreTotal);
-        String out = "Score: " + Integer.toString(score) + "/Total: " + Integer.toString(total);
+        String out = "Score: " + Integer.toString(score.get(question)) + "/Total: " + Integer.toString(total);
         scoreTotal.setText(out);
 
 
