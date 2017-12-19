@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -21,6 +23,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+
+import static com.example.omkar.guesswhat.R.id.answer;
 
 public class AddQuestion extends AppCompatActivity {
 
@@ -59,10 +63,10 @@ public class AddQuestion extends AppCompatActivity {
 
         // Layout references
         ImageButton mPhotoPickerButton = findViewById(R.id.photoPickerButton);
-        Button addAns = findViewById(R.id.addAns);
+        final Button addAns = findViewById(R.id.addAns);
         Button upload = findViewById(R.id.upload);
         final EditText questionField = findViewById(R.id.question);
-        final EditText ansField = findViewById(R.id.answer);
+        final EditText ansField = findViewById(answer);
         final TextView ansListField = findViewById(R.id.ansListTView);
 
         // ImagePickerButton shows an image picker to upload a image for a message
@@ -92,7 +96,7 @@ public class AddQuestion extends AppCompatActivity {
                     ansListTxt = ans;
                 }
                 else{
-                    ansListTxt += ansListTxt + ", " + ans;
+                    ansListTxt += (", " + ans);
                 }
                 ansListField.setText(ansListTxt);
                 ansField.setText("");
@@ -136,6 +140,16 @@ public class AddQuestion extends AppCompatActivity {
                 }
 
 
+            }
+        });
+
+        // Listener for keyboard enter
+        ansField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    addAns.performClick();
+                }
+                return false;
             }
         });
     }

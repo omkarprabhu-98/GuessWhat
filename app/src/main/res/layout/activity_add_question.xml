@@ -69,6 +69,7 @@
                 android:hint="Answer"
                 android:id="@+id/answer"
                 android:padding="8dp"
+                android:inputType="textShortMessage"
                 android:layout_weight="10"
                 android:textAlignment="center"
                 android:textColor="#000"
