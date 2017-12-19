@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mQnADatabaseReference;
     private ChildEventListener mChildEventListener;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,24 +103,56 @@ public class MainActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!database.isEmpty())
+                if(!database.isEmpty()){
                     loadNewQandI();
-                else{
-                    Intent i = new Intent(MainActivity.this, CheckBack.class);
-                    startActivityForResult(i, RESULT_OK);
+                    FIRST_ENTRY_IN_DATABASE = 0;
                 }
+                else{
+                    LinearLayout endOfQuestions = findViewById(R.id.endOfQuestions);
+                    endOfQuestions.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
+
+        // Button click handler for upload after questions are over
+        Button upload = findViewById(R.id.upload);
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, AddQuestion.class);
+                startActivityForResult(i, RESULT_OK);
             }
         });
     }
 
+
+
+
+    /**
+     * Loads game if database is updated after adding a question
+     * Else loads end of questions UI
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == RESULT_OK) {
-            loadNewQandI();
+
+            if(!database.isEmpty()){
+                loadNewQandI();
+                FIRST_ENTRY_IN_DATABASE = 0;
+            }
+            else{
+                LinearLayout endOfQuestions = findViewById(R.id.endOfQuestions);
+                endOfQuestions.setVisibility(View.VISIBLE);
+            }
         }
     }
+
 
 
 
@@ -158,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
 
     /**
@@ -273,11 +308,17 @@ public class MainActivity extends AppCompatActivity {
         return imgs;
     }
 
+
+
     /**
      * Load a new image after selecting a random question
      * The image is segmented and added to Image grid
      */
     private void loadNewQandI() {
+
+        // end of questions is not visible
+        LinearLayout endOfQuestions = findViewById(R.id.endOfQuestions);
+        endOfQuestions.setVisibility(View.GONE);
 
         // preloader
         final LinearLayout linlaHeaderProgress = (LinearLayout) findViewById(R.id.linlaHeaderProgress);

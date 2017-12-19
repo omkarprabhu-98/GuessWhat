@@ -22,7 +22,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddQuestion" />
-        <activity android:name=".CheckBack"></activity>
 
         <meta-data
             android:name="preloaded_fonts"
