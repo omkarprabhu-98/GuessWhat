@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +34,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
+import static android.os.Build.ID;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int RESULT_OK =  2;
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private HashMap <String, Integer> score = new HashMap<>();
     private int difficulty = 3;
     private Bitmap currentImage;
+
 
     // Current game object
     QnA currentQnA;
@@ -223,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     /**
      * Loads questions from firebase database into the
      */
@@ -274,7 +280,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private ArrayList<Bitmap> splitBitmap(Bitmap img) {
 
-        Bitmap picture = Bitmap.createScaledBitmap(img, 650, 500, true);
+        GridView grid = (GridView) findViewById(R.id.grid);
+        Bitmap picture = Bitmap.createScaledBitmap(img, grid.getWidth(), grid.getHeight(), true);
 
         //Number of rows
         int xCount = difficulty;
