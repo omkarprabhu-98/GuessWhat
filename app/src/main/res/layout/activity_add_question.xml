@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="32dp"
     android:orientation="vertical"
     tools:context="com.example.omkar.guesswhat.AddQuestion">
 
@@ -107,7 +108,7 @@
         android:layout_margin="8dp"
         android:background="#039BE5"
         android:padding="8dp"
-        android:text="Upload question"
+        android:text="Upload"
         android:textColor="#fff" />
 
 </LinearLayout>

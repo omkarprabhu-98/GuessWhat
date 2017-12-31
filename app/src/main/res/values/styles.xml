@@ -1,9 +1,23 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:colorPrimaryDark">#0277BD</item>
+        <item name="android:colorAccent">#039BE5</item>
+        <item name="colorControlActivated">#039BE5</item>
+        <item name="colorControlHighlight">#039BE5</item>
+    </style>
 
+    <style name="actionOverflowButtonStyle" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">#fff</item>
+    </style>
+
+    <style name="PrimaryFlatButton" parent="Theme.AppCompat.Light">
+        <item name="android:buttonStyle">
+            @style/Widget.AppCompat.Button.Borderless.Colored
+        </item>
+        <item name="colorAccent">#039BE5</item>
     </style>
 
 </resources>
