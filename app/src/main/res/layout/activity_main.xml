@@ -24,6 +24,40 @@
         </ProgressBar>
     </LinearLayout>
 
+
+
+
+    <!-- End of questions -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/endOfQuestions"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Check back later for more questions or upload your own question!"
+            android:textSize="16dp"
+            android:layout_margin="32dp"
+            tools:fontFamily="@font/asap_medium_italic" />
+
+        <Button
+            android:id="@+id/upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#039BE5"
+            android:layout_margin="16dp"
+            android:padding="8dp"
+            android:text="UPLOAD"
+            android:textColor="#fff" />
+    </LinearLayout>
+
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -90,12 +124,10 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:gravity="center"
                         android:hint="Answer"
                         android:maxLines="1"
                         android:inputType="textShortMessage"
                         android:padding="16dp"
-                        android:textAlignment="center"
                         android:textSize="18sp" />
                 </RelativeLayout>
 
@@ -125,38 +157,6 @@
 
     </FrameLayout>
 
-
-
-
-    <!-- End of questions -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/endOfQuestions"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Check back later for more questions or upload your own question!"
-            android:textSize="16dp"
-            android:layout_margin="32dp"
-            tools:fontFamily="@font/asap_medium_italic" />
-
-        <Button
-            android:id="@+id/upload"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#039BE5"
-            android:layout_margin="16dp"
-            android:padding="8dp"
-            android:text="UPLOAD"
-            android:textColor="#fff" />
-    </LinearLayout>
 
 
     <!-- App layout -->
