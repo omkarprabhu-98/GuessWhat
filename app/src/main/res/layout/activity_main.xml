@@ -7,6 +7,26 @@
     tools:context="com.example.omkar.guesswhat.MainActivity"
     android:orientation="vertical">
 
+
+    <!-- Preloader -->
+    <LinearLayout
+        android:id="@+id/linlaHeaderProgress"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ProgressBar
+            android:id="@+id/pbHeaderProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </ProgressBar>
+    </LinearLayout>
+
+
+
+
     <!-- End of questions -->
     <LinearLayout
         android:layout_width="fill_parent"
@@ -15,6 +35,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone">
+
         <TextView
             android:id="@+id/text"
             android:layout_width="wrap_content"
@@ -36,73 +57,113 @@
             android:textColor="#fff" />
     </LinearLayout>
 
-    <!-- Preloader -->
-    <LinearLayout
-        android:id="@+id/linlaHeaderProgress"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone" >
 
-        <ProgressBar
-            android:id="@+id/pbHeaderProgress"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="168dp"
+            android:minHeight="?attr/actionBarSize"
+            android:background="#039BE5"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:elevation="4dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/question"
+                android:text="Title"
+                android:maxLines="2"
+                android:textSize="22sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
+
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.v7.widget.CardView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        </ProgressBar>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="16dp"
+            android:padding="4dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <GridView
+                    android:id="@+id/grid"
+                    android:layout_margin="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="250dp"
+                    android:columnWidth="90dp"
+                    android:gravity="center"
+                    android:horizontalSpacing="2dp"
+                    android:numColumns="auto_fit"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="2dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:layout_weight="0">
+
+                    <EditText
+                        android:id="@+id/edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:hint="Answer"
+                        android:maxLines="1"
+                        android:inputType="textShortMessage"
+                        android:padding="16dp"
+                        android:textSize="18sp" />
+                </RelativeLayout>
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right">
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="NEXT"
+                        android:id="@+id/next"
+                        android:textSize="16sp"
+                        android:theme="@style/PrimaryFlatButton" />
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ENTER"
+                        android:id="@+id/enter"
+                        android:textSize="16sp"
+                        android:theme="@style/PrimaryFlatButton" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </FrameLayout>
+
 
 
     <!-- App layout -->
-    <TextView
-        android:id="@+id/question"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:gravity="center"
-        android:text="Question?"
-        android:textAlignment="center"
-        android:textColor="#000"
-        android:textSize="24sp" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:orientation="vertical"
-        android:padding="4dp">
 
-        <GridView
-            android:id="@+id/grid"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:columnWidth="90dp"
-            android:gravity="center"
-            android:horizontalSpacing="0dp"
-            android:numColumns="auto_fit"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="2dp" />
-    </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0">
 
-        <EditText
-            android:id="@+id/edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:hint="Answer"
-            android:maxLines="1"
-            android:inputType="textShortMessage"
-            android:padding="16dp"
-            android:textAlignment="center"
-            android:textSize="18sp" />
-    </RelativeLayout>
 
 
     <TextView
@@ -115,36 +176,7 @@
         android:textAlignment="center"
         android:textSize="16sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal">
 
-
-        <Button
-            android:id="@+id/next"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:background="#039BE5"
-            android:padding="8dp"
-            android:text="NEXT"
-            android:textColor="#fff" />
-
-        <Button
-            android:id="@+id/enter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:background="#039BE5"
-            android:padding="8dp"
-            android:text="ENTER"
-            android:textColor="#fff" />
-
-    </LinearLayout>
 
 
 
