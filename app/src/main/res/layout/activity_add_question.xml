@@ -39,8 +39,9 @@
 
         <ImageButton
             android:id="@+id/photoPickerButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
             android:backgroundTint="@color/colorPrimary"
             android:background="@android:drawable/ic_menu_gallery" />
     </LinearLayout>
