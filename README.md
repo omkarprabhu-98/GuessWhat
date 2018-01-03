@@ -16,4 +16,4 @@ To contibute to this project checkout: [Contribute](https://github.com/omkarprab
 
 ### License
 
-To contibute to this project checkout: [Contribute](https://github.com/omkarprabhu-98/GuessWhat/blob/master/LICENSE.md)
+This project is licensed under [MIT License](https://github.com/omkarprabhu-98/GuessWhat/blob/master/LICENSE.md)
