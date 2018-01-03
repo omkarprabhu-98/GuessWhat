@@ -13,3 +13,7 @@ Install the application from: [Here](https://drive.google.com/file/d/1wUb0HxuMke
 ### Contribute
 
 To contibute to this project checkout: [Contribute](https://github.com/omkarprabhu-98/GuessWhat/blob/master/CONTRIBUTING.md)
+
+### License
+
+To contibute to this project checkout: [Contribute](https://github.com/omkarprabhu-98/GuessWhat/blob/master/LICENSE.md)
