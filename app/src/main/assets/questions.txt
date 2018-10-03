@@ -1,0 +1,6 @@
+What objects can you see in the image?
+4
+Which letters are present in the image?
+5
+Which color is dominant in the image?
+1
