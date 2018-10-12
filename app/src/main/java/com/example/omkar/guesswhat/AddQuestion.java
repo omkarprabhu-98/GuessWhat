@@ -89,19 +89,21 @@ public class AddQuestion extends AppCompatActivity {
             public void onClick(View view) {
 
                 // get answer and add to list
-                String ans = ansField.getText().toString().toLowerCase();
-                ansList.add(ans);
-                String ansListTxt = ansListField.getText().toString();
+                String ans = ansField.getText().toString().trim().toLowerCase();
 
-                // display answer list
-                if (ansListTxt.equals("")){
-                    ansListTxt = ans;
+                if (!ans.isEmpty()) {
+                    ansList.add(ans);
+                    String ansListTxt = ansListField.getText().toString();
+
+                    // display answer list
+                    if (ansListTxt.equals("")) {
+                        ansListTxt = ans;
+                    } else {
+                        ansListTxt += (", " + ans);
+                    }
+                    ansListField.setText(ansListTxt);
+                    ansField.setText("");
                 }
-                else{
-                    ansListTxt += (", " + ans);
-                }
-                ansListField.setText(ansListTxt);
-                ansField.setText("");
             }
         });
 
@@ -116,11 +118,10 @@ public class AddQuestion extends AppCompatActivity {
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                 // get question from Question field
-                question = questionField.getText().toString();
-
+                question = questionField.getText().toString().trim();
 
                 // check parameters are filled
-                if (photoUri != null && question != null && ansList.size() != 0){
+                if (photoUri != null && !question.isEmpty() && ansList.size() != 0){
 
                     // Upload picture to firebase storage
                     StorageReference photoRef = mQuestionPhotosStorageReference.child(photoUri.getLastPathSegment());
@@ -145,8 +146,14 @@ public class AddQuestion extends AppCompatActivity {
 
                 }
                 else{
+                    if (question.isEmpty()) {
+                        showError(questionField, "Please fill in the question");
+                    } else if (photoUri == null ) {
+                        Toast.makeText(AddQuestion.this, "Please pick a image", Toast.LENGTH_SHORT).show();
+                    } else if (ansList.isEmpty()) {
+                        showError(ansField, "Please fill in the answer");
+                    }
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    Toast.makeText(AddQuestion.this, "Please fill all fields correctly", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -180,5 +187,10 @@ public class AddQuestion extends AppCompatActivity {
                     .load(selectImageUri.toString())
                     .into(photoImageView);
         }
+    }
+
+    private void showError(TextView field, String message) {
+        field.setError(message);
+        field.requestFocus();
     }
 }
